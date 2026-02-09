@@ -20,7 +20,7 @@ const EmployeeWelfarePie = ({ data = [], size = 220 }) => {
 
             <div className="mt-4 w-full max-w-md">
                 {data.map(d => (
-                    <div key={d.label} className="flex items-center justify-between text-indigo-100 mb-2">
+                    <div key={d.label} className="flex items-center justify-between text-gray-200 mb-2">
                         <div className="flex items-center">
                             <span style={{ background: d.color }} className="inline-block w-3 h-3 rounded mr-2" />
                             <span>{d.label}</span>
