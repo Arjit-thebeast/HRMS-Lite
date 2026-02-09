@@ -1,10 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import api from '../api';
 import { Users, Calendar } from 'lucide-react';
+import EmployeeWelfarePie from '../components/EmployeeWelfarePie';
 
 const Dashboard = () => {
     const [stats, setStats] = useState({ total_employees: 0, present_today: 0 });
     const [presentEmployees, setPresentEmployees] = useState([]);
+    const [welfareData, setWelfareData] = useState([
+        { label: 'Health', value: 40, color: '#34D399' },
+        { label: 'Education', value: 25, color: '#60A5FA' },
+        { label: 'Recreation', value: 20, color: '#FBBF24' },
+        { label: 'Other', value: 15, color: '#F472B6' }
+    ]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -14,6 +21,13 @@ const Dashboard = () => {
 
                 const presentRes = await api.get('/attendance/today/');
                 setPresentEmployees(presentRes.data);
+
+                try {
+                    const welfareRes = await api.get('/welfare/');
+                    if (welfareRes && welfareRes.data) setWelfareData(welfareRes.data);
+                } catch (e) {
+                    // fallback to sample welfare data
+                }
             } catch (error) {
                 console.error('Error fetching dashboard data:', error);
             }
@@ -46,7 +60,7 @@ const Dashboard = () => {
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <div className="flex flex-col gap-6 mb-8">
                 <div className="bg-gradient-to-br from-indigo-500 to-purple-600 p-6 rounded-lg shadow-lg flex items-center justify-between border-l-4 border-cyan-400 text-white">
                     <div>
                         <p className="text-indigo-100 text-sm font-medium uppercase">Total Employees</p>
@@ -66,8 +80,7 @@ const Dashboard = () => {
                     </div>
                 </div>
             </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div className="flex flex-col gap-8">
                 <div className="bg-white bg-opacity-10 backdrop-blur-md p-6 rounded-lg shadow-lg border border-indigo-300 border-opacity-20">
                     <h2 className="text-xl font-semibold mb-4 text-white">Who is Present Today?</h2>
                     {presentEmployees.length > 0 ? (
@@ -85,12 +98,16 @@ const Dashboard = () => {
                         <p className="text-indigo-200 italic">No employees marked present yet.</p>
                     )}
                 </div>
-
                 <div className="bg-white bg-opacity-10 backdrop-blur-md p-6 rounded-lg shadow-lg border border-purple-300 border-opacity-20">
                     <h2 className="text-xl font-semibold mb-4 text-white">Quick Actions</h2>
                     <p className="text-indigo-100 mb-4">
                         Manage your employees and track attendance efficiently. Use the navigation bar or the buttons below.
                     </p>
+                </div>
+
+                <div className="bg-white bg-opacity-8 backdrop-blur-sm p-6 rounded-lg shadow-lg border border-indigo-300 border-opacity-10">
+                    <h2 className="text-xl font-semibold mb-4 text-white">Employee Welfare</h2>
+                    <EmployeeWelfarePie data={welfareData} />
                 </div>
             </div>
         </div>
