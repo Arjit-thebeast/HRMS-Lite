@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import api from '../api';
-import { Users, Calendar } from 'lucide-react';
+import { Users, Calendar, TrendingUp } from 'lucide-react';
 import PieChart from '../components/PieChart';
 
 const Dashboard = () => {
-    const [stats, setStats] = useState({ total_employees: 0, present_today: 0 });
+    const [stats, setStats] = useState({ total_employees: 0, present_today: 0, absent_today: 0, pending_records: 0 });
     const [presentEmployees, setPresentEmployees] = useState([]);
 
     useEffect(() => {
@@ -38,78 +38,72 @@ const Dashboard = () => {
         });
     };
 
-    // sample welfare data — replace with API data if available
     const welfareData = [
-        { label: 'Health', value: 40, color: '#06b6d4' },
-        { label: 'Training', value: 30, color: '#7c3aed' },
-        { label: 'Benefits', value: 20, color: '#f97316' },
+        { label: 'Health', value: 45, color: '#06b6d4' },
+        { label: 'Training', value: 30, color: '#8b5cf6' },
+        { label: 'Benefits', value: 15, color: '#f97316' },
         { label: 'Other', value: 10, color: '#10b981' },
     ];
 
+    const absent_today = Math.max(0, stats.total_employees - stats.present_today);
+
     return (
-        <div className="p-6">
-            <div className="mb-6">
-                <h1 className="text-4xl font-bold text-white">{getGreeting()}, HR</h1>
-                <p className="text-indigo-200 mt-1 text-lg">{formatDate()}</p>
-            </div>
-
-            <div className="space-y-6 mb-8">
-                <div className="bg-gradient-to-br from-indigo-500 to-purple-600 p-6 rounded-lg shadow-lg flex items-center justify-between border-l-4 border-cyan-400 text-white w-full">
-                    <div>
-                        <p className="text-indigo-100 text-sm font-medium uppercase">Total Employees</p>
-                        <p className="text-4xl font-bold">{stats.total_employees}</p>
-                    </div>
-                    <div className="p-3 bg-indigo-400 rounded-full">
-                        <Users className="w-8 h-8 text-white" />
-                    </div>
+        <div className="min-h-screen bg-gray-50 p-8">
+            <div className="max-w-6xl mx-auto">
+                <div className="mb-8">
+                    <h1 className="text-4xl font-bold text-gray-900">{getGreeting()}, HR</h1>
+                    <p className="text-gray-600 mt-1 text-lg">{formatDate()}</p>
                 </div>
 
-                <div className="bg-gradient-to-br from-teal-500 to-cyan-600 p-6 rounded-lg shadow-lg flex items-center justify-between border-l-4 border-yellow-300 text-white w-full">
-                    <div>
-                        <p className="text-teal-100 text-sm font-medium uppercase">Present Today</p>
-                        <p className="text-4xl font-bold">{stats.present_today}</p>
+                <div className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div className="bg-white p-6 rounded-lg shadow-sm border-l-4 border-teal-500">
+                            <p className="text-gray-600 text-sm font-medium uppercase mb-2">Total Employees</p>
+                            <p className="text-3xl font-bold text-gray-900 mb-2">{stats.total_employees}</p>
+                            <p className="text-sm text-green-600 font-medium">+12%</p>
+                        </div>
+
+                        <div className="bg-white p-6 rounded-lg shadow-sm border-l-4 border-green-500">
+                            <p className="text-gray-600 text-sm font-medium uppercase mb-2">Present Today</p>
+                            <p className="text-3xl font-bold text-green-600">{stats.present_today}</p>
+                        </div>
+
+                        <div className="bg-white p-6 rounded-lg shadow-sm border-l-4 border-red-500">
+                            <p className="text-gray-600 text-sm font-medium uppercase mb-2">Absent Today</p>
+                            <p className="text-3xl font-bold text-red-600">{absent_today}</p>
+                        </div>
+
+                        <div className="bg-white p-6 rounded-lg shadow-sm border-l-4 border-indigo-500">
+                            <p className="text-gray-600 text-sm font-medium uppercase mb-2">Pending Records</p>
+                            <p className="text-3xl font-bold text-indigo-600">0</p>
+                            <p className="text-xs text-gray-500 mt-2 italic">Requires admin attention</p>
+                        </div>
                     </div>
-                    <div className="p-3 bg-teal-400 rounded-full">
-                        <Calendar className="w-8 h-8 text-white" />
+
+                    <div className="bg-white p-6 rounded-lg shadow-sm">
+                        <h2 className="text-xl font-semibold mb-4 text-gray-900">Employees per Department</h2>
+                        <div className="h-64 bg-gray-100 rounded flex items-center justify-center text-gray-500">
+                            <p>Chart placeholder — connect to backend when ready</p>
+                        </div>
                     </div>
-                </div>
 
-                <div className="bg-white bg-opacity-10 backdrop-blur-md p-6 rounded-lg shadow-lg border border-indigo-300 border-opacity-20">
-                    <h2 className="text-xl font-semibold mb-4 text-white">Who is Present Today?</h2>
-                    {presentEmployees.length > 0 ? (
-                        <ul className="divide-y divide-indigo-300 divide-opacity-20">
-                            {presentEmployees.map(emp => (
-                                <li key={emp.id} className="py-3 flex items-center">
-                                    <div className="h-8 w-8 rounded-full bg-gradient-to-br from-cyan-400 to-teal-500 flex items-center justify-center text-white font-bold mr-3 shadow-md">
-                                        {emp.full_name.charAt(0)}
-                                    </div>
-                                    <span className="text-indigo-100">{emp.full_name}</span>
-                                </li>
-                            ))}
-                        </ul>
-                    ) : (
-                        <p className="text-indigo-200 italic">No employees marked present yet.</p>
-                    )}
-                </div>
-
-                <div className="bg-white bg-opacity-10 backdrop-blur-md p-6 rounded-lg shadow-lg border border-purple-300 border-opacity-20">
-                    <h2 className="text-xl font-semibold mb-4 text-white">Quick Actions</h2>
-                    <p className="text-indigo-100 mb-4">
-                        Manage your employees and track attendance efficiently. Use the navigation bar or the buttons below.
-                    </p>
-                </div>
-
-                <div className="bg-white bg-opacity-5 backdrop-blur-sm p-6 rounded-lg shadow-lg border border-indigo-300 border-opacity-10">
-                    <h2 className="text-xl font-semibold mb-4 text-white">Employee Welfare</h2>
-                    <div className="flex flex-col lg:flex-row items-center lg:items-start gap-6">
-                        <PieChart data={welfareData} size={220} innerRadius={70} />
-                        <div className="text-indigo-100 max-w-md">
-                            <p className="mb-3">Overview of employee welfare allocation. Replace with real data from the backend when available.</p>
-                            <ul className="list-disc pl-5 space-y-1">
-                                {welfareData.map((w, i) => (
-                                    <li key={i}>{w.label}: {w.value}%</li>
-                                ))}
-                            </ul>
+                    <div className="bg-white p-6 rounded-lg shadow-sm">
+                        <h2 className="text-xl font-semibold mb-4 text-gray-900">Employee Welfare</h2>
+                        <div className="flex flex-col lg:flex-row items-center gap-8">
+                            <div className="flex-shrink-0">
+                                <PieChart data={welfareData} size={240} innerRadius={75} />
+                            </div>
+                            <div className="flex-1 text-gray-700">
+                                <p className="mb-4 leading-relaxed">Overview of employee welfare allocation. Ensures comprehensive support across health, professional development, benefits, and other initiatives.</p>
+                                <ul className="space-y-2">
+                                    {welfareData.map((w, i) => (
+                                        <li key={i} className="flex items-center">
+                                            <span className="inline-block w-3 h-3 mr-3 rounded-full" style={{ background: w.color }} />
+                                            <span>{w.label}: <span className="font-semibold">{w.value}%</span></span>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </div>

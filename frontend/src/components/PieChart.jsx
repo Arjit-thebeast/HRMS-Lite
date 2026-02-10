@@ -34,19 +34,19 @@ const PieChart = ({ data = [], size = 200, innerRadius = 60 }) => {
           const end = angle + sliceAngle;
           angle += sliceAngle;
           const path = describeArc(cx, cy, r, start, end);
-          return <path key={idx} d={path} fill={d.color || '#ccc'} stroke="#fff" strokeWidth="0.5" />;
+          return <path key={idx} d={path} fill={d.color || '#ccc'} stroke="#fff" strokeWidth="1" />;
         })}
-        <circle cx={cx} cy={cy} r={innerRadius} fill="#0f172a" opacity="0.9" />
-        <text x={cx} y={cy} textAnchor="middle" dy="6" fill="#fff" className="font-semibold text-sm">Welfare</text>
+        <circle cx={cx} cy={cy} r={innerRadius} fill="#f9fafb" opacity="1" />
+        <text x={cx} y={cy} textAnchor="middle" dy="5" fill="#4b5563" className="font-semibold text-xs">Welfare</text>
       </svg>
       <div className="mt-4 w-full max-w-xs">
         {data.map((d, i) => (
-          <div key={i} className="flex items-center justify-between text-sm text-indigo-100 mb-2">
+          <div key={i} className="flex items-center justify-between text-sm text-gray-700 mb-2">
             <div className="flex items-center">
-              <span className="inline-block w-3 h-3 mr-2" style={{ background: d.color }} />
+              <span className="inline-block w-3 h-3 mr-2 rounded-full" style={{ background: d.color }} />
               <span>{d.label}</span>
             </div>
-            <span className="font-medium">{d.value}</span>
+            <span className="font-medium">{d.value}%</span>
           </div>
         ))}
       </div>
